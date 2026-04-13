@@ -1,0 +1,18 @@
+{
+  "name": "project_01_localtestgenerator_antigravity",
+  "version": "1.0.0",
+  "description": "Local Test Generator Blueprint",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently npm:dev-*",
+    "dev-server": "cd server && npm run dev",
+    "dev-client": "cd client && npm run dev",
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
