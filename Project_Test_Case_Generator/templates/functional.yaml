@@ -1,0 +1,27 @@
+# Functional Testing Template
+# Focuses on positive paths and main business logic
+description: "Functional testing template for happy path and main scenarios"
+coverage_categories:
+  - happy_path
+  - major_features
+  - data_validation
+  - common_workflows
+
+depth: "medium"
+tone: "professional"
+focus_areas:
+  - Primary user workflows
+  - Feature completeness
+  - Basic validation
+  - Happy path scenarios
+
+test_types:
+  - Positive:
+      count: 3
+      description: "Validate main business logic works as expected"
+  - Negative:
+      count: 1
+      description: "Test basic error handling"
+  - Edge:
+      count: 1
+      description: "Test boundary conditions"

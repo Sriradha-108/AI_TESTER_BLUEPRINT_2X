@@ -1,0 +1,19 @@
+# Smoke Testing Template
+# Critical path tests only for quick validation
+description: "Smoke testing template - critical path only"
+coverage_categories:
+  - critical_path
+  - core_functionality
+
+depth: "shallow"
+tone: "concise"
+focus_areas:
+  - Core business logic
+  - Critical user flows
+  - System connectivity
+  - Basic CRUD operations
+
+test_types:
+  - Positive:
+      count: 5
+      description: "Critical happy paths only"

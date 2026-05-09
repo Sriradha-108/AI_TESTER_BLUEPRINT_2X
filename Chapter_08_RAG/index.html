@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Visualizer | The Testing Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-dark: #0f172a;
+            --glass: rgba(30, 41, 59, 0.7);
+            --text-light: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                              radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+
+        .chunk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .chunk-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .chunk-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .chunk-id {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-bottom-left-radius: 1rem;
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
+
+        .chunk-content {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            margin-top: 1rem;
+        }
+
+        .chunk-meta {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chunk-badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .embedding-preview {
+            background: #000;
+            color: var(--accent);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.7rem;
+            margin-top: 1rem;
+            opacity: 0.7;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 5rem;
+            font-size: 1.5rem;
+            color: var(--text-dim);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate {
+            animation: fadeIn 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="animate">
+            <h1>Simple RAG Explorer</h1>
+            <p class="subtitle">Visualizing Document Chunking & Nomic Embeddings for The Testing Academy</p>
+        </header>
+
+        <div class="stats-grid animate" style="animation-delay: 0.1s">
+            <div class="stat-card">
+                <span class="stat-value" id="total-chunks">0</span>
+                <span class="stat-label">Total Chunks</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">768</span>
+                <span class="stat-label">Embedding Dimensions</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">Nomic</span>
+                <span class="stat-label">Model Architecture</span>
+            </div>
+        </div>
+
+        <div id="loading">Loading chunk data... (Run simple_rag.py first)</div>
+        <div class="chunk-grid" id="chunk-container"></div>
+    </div>
+
+    <script src="rag_data.js"></script>
+    <script>
+        function loadData() {
+            try {
+                // The data is now pre-loaded via the script tag as 'ragData'
+                const data = ragData;
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('total-chunks').innerText = data.length;
+                
+                const container = document.getElementById('chunk-container');
+                
+                data.forEach((chunk, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'chunk-card animate';
+                    card.style.animationDelay = `${(index * 0.05) + 0.2}s`;
+                    
+                    card.innerHTML = `
+                        <div class="chunk-id">#${chunk.id}</div>
+                        <div class="chunk-badge">TEXT CHUNK</div>
+                        <div class="chunk-content">${chunk.content}</div>
+                        <div class="embedding-preview">
+                            [0.012, -0.453, 0.892, 0.124, ...] 
+                        </div>
+                        <div class="chunk-meta">
+                            <span style="color: var(--text-dim); font-size: 0.8rem;">Size: ${chunk.length} chars</span>
+                            <span style="color: var(--accent); font-size: 0.8rem; font-weight: 600;">Vector Ready</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                document.getElementById('loading').innerHTML = `
+                    <div style="color: #ef4444">
+                        <h3>Error Loading Data</h3>
+                        <p>Please run <code>python simple_rag.py</code> first to generate the data.</p>
+                    </div>
+                `;
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

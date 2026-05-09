@@ -1,0 +1,25 @@
+# Edge Case Testing Template
+# Boundary conditions and unusual inputs
+description: "Edge case testing template for boundary conditions"
+coverage_categories:
+  - boundary_values
+  - limit_conditions
+  - unusual_inputs
+  - error_conditions
+
+depth: "very_deep"
+tone: "rigorous"
+focus_areas:
+  - Boundary values (min, max, 0, negative)
+  - Null and empty inputs
+  - Special characters
+  - Overflow/underflow scenarios
+  - Concurrent access
+
+test_types:
+  - Edge:
+      count: 3
+      description: "Boundary value tests"
+  - Boundary:
+      count: 2
+      description: "Limit condition tests"

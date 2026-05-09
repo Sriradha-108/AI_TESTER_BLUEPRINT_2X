@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  backend:
+    build: .
+    container_name: blast-agent-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=production
+    volumes:
+      - ./.tmp:/app/.tmp
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: blast-agent-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped

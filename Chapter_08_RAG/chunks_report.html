@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chunk Analysis Report | The Testing Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --primary: #2563eb;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent: #f59e0b;
+        }
+
+        [data-theme="dark"] {
+            --surface: #0f172a;
+            --background: #020617;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            padding-bottom: 5rem;
+        }
+
+        .navbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .report-header {
+            margin-bottom: 3rem;
+        }
+
+        .report-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: block;
+            color: var(--primary);
+        }
+
+        .metric-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .search-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            width: 100%;
+            margin-bottom: 2rem;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+            color: var(--text-main);
+        }
+
+        .search-bar:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        th {
+            background: rgba(0,0,0,0.02);
+            text-align: left;
+            padding: 1rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .chunk-index {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .chunk-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            max-width: 600px;
+        }
+
+        .chunk-meta-info {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
+        }
+
+        @media (max-width: 768px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <nav class="navbar">
+        <div class="logo">
+            <span>🔹</span> TTA Chunks Report
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Mode</button>
+    </nav>
+
+    <div class="container">
+        <header class="report-header">
+            <span class="badge">Audit Mode</span>
+            <h1>Knowledge Base Analysis</h1>
+            <p style="color: var(--text-muted)">A detailed breakdown of document segmentation for the RAG pipeline.</p>
+        </header>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="metric-value" id="count-val">0</span>
+                <span class="metric-label">Total Chunks</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value" id="avg-len-val">0</span>
+                <span class="metric-label">Avg. Chunk Size</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value" id="total-chars-val">0</span>
+                <span class="metric-label">Total Characters</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">Nomic</span>
+                <span class="metric-label">Target Embedding</span>
+            </div>
+        </div>
+
+        <input type="text" class="search-bar" id="search" placeholder="Search chunks for keywords..." onkeyup="filterChunks()">
+
+        <table id="chunks-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px">ID</th>
+                    <th>Chunk Content</th>
+                    <th style="width: 150px">Metadata</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <!-- Rows will be injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="rag_data.js"></script>
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const current = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+
+        function init() {
+            const data = ragData;
+            const body = document.getElementById('table-body');
+            
+            // Calculate Metrics
+            let totalChars = 0;
+            data.forEach(c => totalChars += c.length);
+            
+            document.getElementById('count-val').innerText = data.length;
+            document.getElementById('total-chars-val').innerText = totalChars.toLocaleString();
+            document.getElementById('avg-len-val').innerText = Math.round(totalChars / data.length);
+
+            renderRows(data);
+        }
+
+        function renderRows(data) {
+            const body = document.getElementById('table-body');
+            body.innerHTML = '';
+            
+            data.forEach(chunk => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="chunk-index">#${chunk.id.toString().padStart(2, '0')}</td>
+                    <td>
+                        <div class="chunk-text">${chunk.content}</div>
+                    </td>
+                    <td>
+                        <div class="chunk-meta-info">
+                            <span>Length: <strong>${chunk.length}</strong></span>
+                            <span>Tokens: ~${Math.round(chunk.length / 4)}</span>
+                            <div style="margin-top: 0.5rem">
+                                <span class="tag">EMBEDDABLE</span>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                body.appendChild(row);
+            });
+        }
+
+        function filterChunks() {
+            const query = document.getElementById('search').value.toLowerCase();
+            const filtered = ragData.filter(c => c.content.toLowerCase().includes(query));
+            renderRows(filtered);
+        }
+
+        init();
+    </script>
+</body>
+</html>

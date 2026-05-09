@@ -1,0 +1,24 @@
+# Security Testing Template
+# Authentication, authorization, and data protection
+description: "Security testing template for auth and data protection"
+coverage_categories:
+  - authentication
+  - authorization
+  - data_protection
+  - injection_attacks
+  - access_control
+
+depth: "deep"
+tone: "security-focused"
+focus_areas:
+  - Authentication flows
+  - Authorization boundaries
+  - Input validation and injection prevention
+  - Data encryption
+  - Session management
+  - OWASP Top 10
+
+test_types:
+  - Security:
+      count: 5
+      description: "Security vulnerability and attack scenarios"

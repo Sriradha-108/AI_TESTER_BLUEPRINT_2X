@@ -1,0 +1,28 @@
+# Regression Testing Template
+# Tests for previously found bugs and edge cases
+description: "Regression testing template for bug fixes and edge cases"
+coverage_categories:
+  - bug_fixes
+  - edge_cases
+  - boundary_conditions
+  - state_transitions
+
+depth: "deep"
+tone: "comprehensive"
+focus_areas:
+  - Known bug scenarios
+  - Edge cases and boundaries
+  - State management
+  - Rollback scenarios
+  - Data integrity
+
+test_types:
+  - Edge:
+      count: 2
+      description: "Boundary value tests"
+  - Negative:
+      count: 2
+      description: "Error scenarios and recovery"
+  - Positive:
+      count: 1
+      description: "Verify fix still works"

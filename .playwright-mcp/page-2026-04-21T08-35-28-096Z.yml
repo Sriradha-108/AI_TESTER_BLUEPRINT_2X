@@ -1,0 +1,83 @@
+- generic [ref=e1]:
+  - main "Application main content" [ref=e6]:
+    - generic [ref=e10]:
+      - generic [ref=e13]:
+        - img "VWO" [ref=e15]
+        - generic [ref=e71]:
+          - img [ref=e73]
+          - generic [ref=e76]: Your email, password, IP address or location did not match
+        - list [ref=e19]:
+          - listitem [ref=e20]:
+            - textbox "Email address" [ref=e23]:
+              - /placeholder: Enter email ID
+          - listitem [ref=e24]:
+            - generic [ref=e26]:
+              - textbox "Password" [ref=e27]:
+                - /placeholder: Enter password
+              - button "Toggle password visibility" [ref=e28] [cursor=pointer]:
+                - img [ref=e77]
+          - listitem [ref=e29]:
+            - button "Forgot Password?" [ref=e30] [cursor=pointer]
+          - listitem [ref=e31]:
+            - generic [ref=e33] [cursor=pointer]:
+              - generic [ref=e34]: Remember me
+              - img [ref=e80]
+          - listitem [ref=e35]:
+            - button "Sign in" [active] [ref=e36] [cursor=pointer]:
+              - generic [ref=e37]: Sign in
+          - listitem [ref=e38]:
+            - heading "Or" [level=6] [ref=e40]
+          - listitem [ref=e42]:
+            - button "Sign in with Google" [ref=e44] [cursor=pointer]:
+              - generic [ref=e45]:
+                - img [ref=e82]
+                - generic [ref=e47]: Sign in with Google
+          - listitem [ref=e49]:
+            - button "Sign in using SSO" [ref=e50] [cursor=pointer]:
+              - img [ref=e84]
+              - generic [ref=e51]: Sign in using SSO
+          - listitem [ref=e52]:
+            - button "Sign in with Passkey" [ref=e53] [cursor=pointer]:
+              - img [ref=e86]
+              - generic [ref=e54]: Sign in with Passkey
+          - listitem [ref=e88]:
+            - generic [ref=e90]: New to VWO?
+          - listitem [ref=e92]:
+            - link "Start a FREE TRIAL" [ref=e93] [cursor=pointer]:
+              - /url: https://vwo.com/free-trial/?utm_medium=website&utm_source=login-page&utm_campaign=mof_eg_loginpage
+              - generic [ref=e94]: Start a FREE TRIAL
+          - listitem [ref=e57]:
+            - text: By continuing, you agree to VWO's
+            - link "Privacy policy" [ref=e58] [cursor=pointer]:
+              - /url: https://vwo.com/privacy-policy/?utm_medium=app&utm_source=login-page&utm_campaign=legal_privacy_login
+            - text: "&"
+            - link "Terms" [ref=e59] [cursor=pointer]:
+              - /url: https://vwo.com/terms/?utm_medium=website&utm_source=login-page&utm_campaign=legal_terms_login
+            - text: .
+      - generic [ref=e63]:
+        - img "Vwo abtasty logo" [ref=e64]
+        - generic [ref=e65]:
+          - heading "have joined forces to redefine the future of" [level=4] [ref=e66]
+          - heading "Digital Experience Optimization" [level=4] [ref=e67]
+        - img "Vwo Abtasty Shakehands" [ref=e68]
+        - heading "Rest assured, your day-to-day workflow, support team, and account contacts remain exactly the same. We are growing to serve you better." [level=5] [ref=e69]
+  - img [ref=e95]:
+    - generic:
+      - img
+  - img [ref=e96]
+  - img [ref=e97]
+  - img [ref=e98]
+  - img [ref=e99]
+  - img [ref=e100]
+  - img [ref=e101]
+  - img [ref=e102]
+  - img [ref=e103]
+  - img [ref=e104]
+  - img [ref=e105]
+  - img [ref=e106]
+  - img [ref=e107]
+  - img [ref=e108]
+  - img [ref=e109]
+  - img [ref=e110]
+  - img [ref=e111]
+  - img [ref=e112]
