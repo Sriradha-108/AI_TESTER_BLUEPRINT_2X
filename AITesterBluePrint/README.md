@@ -14,6 +14,7 @@ This repository is organized into chapters and projects, each focusing on a spec
   - `simple_rag.py`: Python script for document chunking and embedding logic.
   - `index.html`: Interactive RAG Explorer visualization.
   - `chunks_report.html`: Detailed chunk analysis and audit report.
+- **chapter_09_Project_QACopilot**: 🤖 **QA Copilot** — a multi-source RAG application for QA engineers working on app.vwo.com. Indexes Selenium Java code, Playwright TypeScript code, manual test cases (CSV), product PRDs (PDF), and JIRA bug exports (Markdown) into Qdrant, then routes natural-language queries via Groq `gpt-oss-120b` to return cited answers, generate new test cases from JIRA tickets, find similar test cases, or generate Selenium/Playwright automation code. Includes FastAPI backend, React + Vite + Tailwind frontend, and an APScheduler-based hourly auto-ingest. See [chapter_09_Project_QACopilot/README.md](./chapter_09_Project_QACopilot/README.md).
 - **Project_01_LocalTestGenerator**: Generating test cases locally using LLMs.
 - **Project_02_RICE_POT_Selenium**: Integrating AI with Selenium frameworks.
 
