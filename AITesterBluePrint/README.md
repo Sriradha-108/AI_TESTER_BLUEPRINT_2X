@@ -16,7 +16,8 @@ This repository is organized into chapters, projects, and lectures, each focusin
   - `rag_api_server.py`: FastAPI server exposing RAG endpoints.
   - `rag_interface.html`: Beautiful, interactive web interface.
   - Detailed markdown guides (`RAG_SETUP_GUIDE.md`, `TROUBLESHOOTING.md`, etc.).
-- **chapter_09_Project_QACopilot**: 🤖 **QA Copilot** — a multi-source RAG application for QA engineers working on app.vwo.com. Indexes Selenium Java code, Playwright TypeScript code, manual test cases (CSV), product PRDs (PDF), and JIRA bug exports (Markdown) into Qdrant, then routes natural-language queries via Groq `gpt-oss-120b` to return cited answers, generate new test cases from JIRA tickets, find similar test cases, or generate Selenium/Playwright automation code. Includes FastAPI backend, React + Vite + Tailwind frontend, and an APScheduler-based hourly auto-ingest. See [chapter_09_Project_QACopilot/README.md](./chapter_09_Project_QACopilot/README.md).
+- **chapter_09_Project_QACopilot**: 🤖 **QA Copilot** — a multi-source RAG application for QA engineers working on app.vwo.com. Indexes Selenium Java code, Playwright TypeScript code, manual test cases (CSV), product PRDs (PDF), and JIRA bug exports (Markdown) into Qdrant, then routes natural-language queries via Groq `gpt-oss-120b` to return cited answers, generate new test cases from JIRA tickets, find similar test cases, or generate Selenium/Playwright automation code. Includes FastAPI backend, React + Vite + Tailwind frontend, an APScheduler-based hourly auto-ingest, and an `index.html` dashboard for easy access. See [chapter_09_Project_QACopilot/README.md](./chapter_09_Project_QACopilot/README.md).
+- **chapter_10_MCP_Basics**: 🔌 **MCP Basics** — comprehensive guide for implementing Model Context Protocol (MCP) servers. Includes hands-on setup for `mcp-playwright` integration with VS Code Copilot, step-by-step configuration guides, best practices for browser automation, and real-world examples. Features working Playwright MCP server setup with examples for automating browser interactions, web scraping, and AI-powered testing. See [chapter_10_MCP_Basics/README.md](./chapter_10_MCP_Basics/README.md).
 
 ### 🎓 Lectures
 - **Lecture_Playwright_CLI**: Quick reference and tutorials on utilizing Playwright's command line interface.
@@ -92,6 +93,55 @@ python -m app.main
 cd ../frontend
 npm install
 npm run dev
+```
+
+---
+
+## 🔌 Getting Started with Playwright MCP (Chapter 10)
+
+Model Context Protocol (MCP) enables AI models to control web browsers and automate testing workflows.
+
+### 1. Installation
+```powershell
+# Install Playwright MCP globally
+npm install -g mcp-playwright
+
+# Or install locally
+npm install mcp-playwright
+npm install playwright
+```
+
+### 2. Start the MCP Server
+```powershell
+# Start the MCP server (runs on default port)
+npx mcp-playwright
+
+# Or with custom options
+npx mcp-playwright --browser chromium --headless false
+```
+
+### 3. Run Browser Automation Examples
+```powershell
+cd chapter_10_MCP_Basics
+
+# Run example: Open app.vwo.com
+node ../open-vwo-mcp.js
+
+# Run Playwright tests
+npx playwright test
+```
+
+### 4. Integrate with Claude (VS Code)
+```json
+// Configure .cursor/mcp.json or claude_desktop_config.json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx mcp-playwright",
+      "args": ["--browser", "chromium"]
+    }
+  }
+}
 ```
 
 ---
