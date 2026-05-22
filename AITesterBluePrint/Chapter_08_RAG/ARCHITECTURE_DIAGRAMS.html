@@ -1,0 +1,414 @@
+<!-- RAG System Architecture Diagram -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VWO RAG System Architecture Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .diagram-section {
+            margin-bottom: 40px;
+        }
+        
+        .diagram-section h2 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .description {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏗️ VWO RAG System - Architecture Diagrams</h1>
+        <p class="subtitle">Complete system architecture with data flow and components</p>
+
+        <!-- Diagram 1: Overall System Architecture -->
+        <div class="diagram-section">
+            <h2>1. Overall System Architecture</h2>
+            <div class="mermaid">
+                graph TB
+                    subgraph Input["📥 Input Layer"]
+                        PDF["PDF Files<br/>(./data/)"]
+                    end
+                    
+                    subgraph Processing["⚙️ Processing Layer"]
+                        Extract["Extract Text<br/>(PyPDF2)"]
+                        Chunk["Chunk Text<br/>(RecursiveCharacterTextSplitter)"]
+                        Embed["Generate Embeddings<br/>(Nomic Embed)"]
+                    end
+                    
+                    subgraph Storage["🗄️ Storage Layer"]
+                        ChromaDB["ChromaDB<br/>(Local Vector DB)"]
+                        Metadata["Metadata Store<br/>(Chunk Info)"]
+                    end
+                    
+                    subgraph Query["🔍 Query Layer"]
+                        QueryEmbed["Embed User Query"]
+                        Search["Semantic Search<br/>(Cosine Similarity)"]
+                    end
+                    
+                    subgraph LLM["🤖 LLM Layer"]
+                        Groq["Groq API<br/>(Mixtral-8x7b)"]
+                    end
+                    
+                    subgraph Output["📤 Output Layer"]
+                        Results["Results + AI Response"]
+                        UI["Web Interface<br/>(rag_interface.html)"]
+                    end
+                    
+                    PDF --> Extract
+                    Extract --> Chunk
+                    Chunk --> Embed
+                    Embed --> ChromaDB
+                    Embed --> Metadata
+                    
+                    ChromaDB --> Search
+                    Metadata --> Search
+                    
+                    QueryEmbed --> Search
+                    Search --> Groq
+                    Groq --> Results
+                    Results --> UI
+            </div>
+            <div class="description">
+                <strong>Data Flow:</strong>
+                <ul>
+                    <li>Input: PDF files in ./data/ folder</li>
+                    <li>Processing: Extract, chunk, and embed using Nomic</li>
+                    <li>Storage: Vectors and metadata stored in ChromaDB</li>
+                    <li>Query: User query embedded and searched semantically</li>
+                    <li>LLM: Groq generates response based on context</li>
+                    <li>Output: Results displayed in web interface</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 2: Ingestion Pipeline -->
+        <div class="diagram-section">
+            <h2>2. PDF Ingestion Pipeline</h2>
+            <div class="mermaid">
+                graph LR
+                    A["📄 PDF File<br/>(vwo_requirements.pdf)"]
+                    B["📖 Extract Text<br/>(PyPDF2)"]
+                    C["📝 Raw Text<br/>(Full Document)"]
+                    D["✂️ Split Chunks<br/>(1000 chars, 200 overlap)"]
+                    E["🧩 Chunks Array<br/>(150-200 chunks)"]
+                    F["🧠 Nomic Embed<br/>(384-dim vectors)"]
+                    G["📊 Vector Embeddings<br/>(Normalized)"]
+                    H["🗄️ ChromaDB Store<br/>(Persistent Storage)"]
+                    I["💾 chroma_db/<br/>(Local Directory)"]
+                    
+                    A -->|PyPDF2.PdfReader| B
+                    B -->|Extract all pages| C
+                    C -->|RecursiveCharacterTextSplitter| D
+                    D -->|Split by separators| E
+                    E -->|For each chunk| F
+                    F -->|Generate vectors| G
+                    G -->|Store with metadata| H
+                    H -->|Persist locally| I
+                    
+                    style A fill:#FFE5E5
+                    style C fill:#FFF9E5
+                    style E fill:#E5F5FF
+                    style G fill:#F0E5FF
+                    style I fill:#E5FFE5
+            </div>
+            <div class="description">
+                <strong>Chunking Strategy:</strong>
+                <ul>
+                    <li>Chunk Size: 1000 characters (optimal for embeddings and context)</li>
+                    <li>Overlap: 200 characters (maintains context continuity)</li>
+                    <li>Separators: ["\n\n", "\n", ". ", " ", ""] (preserves structure)</li>
+                    <li>Embedding Dimension: 384 (Nomic Embed output)</li>
+                    <li>Storage: Each chunk stored with source, index, and timestamp</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 3: Query & Retrieval Pipeline -->
+        <div class="diagram-section">
+            <h2>3. Query & Retrieval Pipeline</h2>
+            <div class="mermaid">
+                graph TD
+                    A["👤 User Query<br/>(Web Interface)"]
+                    B["🧠 Query Embedding<br/>(Nomic Embed)"]
+                    C["📊 Query Vector<br/>(384-dim)"]
+                    D["🗄️ ChromaDB<br/>(Vector Index)"]
+                    E["📐 Cosine Similarity<br/>(Distance Metric)"]
+                    F["🎯 Top-K Chunks<br/>(Ranked by similarity)"]
+                    G["📋 Format Context<br/>(Add metadata)"]
+                    H["💬 LLM Prompt<br/>(Query + Context)"]
+                    I["⚡ Groq API Call<br/>(mixtral-8x7b)"]
+                    J["✍️ AI Response<br/>(Generated Answer)"]
+                    K["🌐 Display Results<br/>(UI + Visualization)"]
+                    
+                    A -->|Input| B
+                    B -->|Generate| C
+                    C -->|Query| D
+                    D -->|Calculate| E
+                    E -->|Retrieve| F
+                    F -->|Prepare| G
+                    G -->|Build| H
+                    H -->|Call| I
+                    I -->|Generate| J
+                    J -->|Display| K
+                    
+                    style A fill:#E5F5FF
+                    style C fill:#F0E5FF
+                    style F fill:#FFE5E5
+                    style J fill:#E5FFE5
+                    style K fill:#FFF9E5
+            </div>
+            <div class="description">
+                <strong>Retrieval Process:</strong>
+                <ul>
+                    <li>Query Embedding: User query converted to vector using Nomic Embed</li>
+                    <li>Similarity Search: Cosine similarity computed against all stored vectors</li>
+                    <li>Top-K Selection: Top-5 (configurable) most similar chunks retrieved</li>
+                    <li>Context Building: Chunks formatted with source and similarity scores</li>
+                    <li>LLM Prompting: Context + query sent to Groq API</li>
+                    <li>Response Generation: Mixtral-8x7b generates contextualized answer</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 4: Component Interaction -->
+        <div class="diagram-section">
+            <h2>4. Component Interaction Diagram</h2>
+            <div class="mermaid">
+                graph TB
+                    subgraph UI["🌐 Frontend"]
+                        HTML["rag_interface.html<br/>(Vue-like Interface)"]
+                    end
+                    
+                    subgraph Python["🐍 Python Backend"]
+                        RAG["ChromaRAGSystem<br/>(chroma_rag_system.py)"]
+                        API["FastAPI Server<br/>(rag_api_server.py)"]
+                    end
+                    
+                    subgraph Storage["💾 Persistent Storage"]
+                        CHROMA["ChromaDB<br/>(./chroma_db/)"]
+                        JSON["chunks_data.json<br/>(Visualization)"]
+                    end
+                    
+                    subgraph External["🌍 External APIs"]
+                        GROQ["Groq API<br/>(mixtral-8x7b)"]
+                        NOMIC["Nomic Embed<br/>(Embeddings)"]
+                    end
+                    
+                    HTML -->|Query Request| API
+                    HTML -->|Load Chunks| JSON
+                    
+                    API -->|Search/Ingest| RAG
+                    RAG -->|Read/Write| CHROMA
+                    RAG -->|Export| JSON
+                    
+                    RAG -->|Embed Query| NOMIC
+                    RAG -->|Embed Chunks| NOMIC
+                    
+                    API -->|Generate Text| GROQ
+                    
+                    HTML -->|Direct Call| GROQ
+                    
+                    style HTML fill:#E5F5FF
+                    style RAG fill:#F0E5FF
+                    style CHROMA fill:#E5FFE5
+                    style GROQ fill:#FFE5E5
+            </div>
+            <div class="description">
+                <strong>Component Responsibilities:</strong>
+                <ul>
+                    <li><strong>rag_interface.html:</strong> User interface, visualizes chunks, displays results</li>
+                    <li><strong>chroma_rag_system.py:</strong> Core RAG logic (extract, chunk, embed, search)</li>
+                    <li><strong>rag_api_server.py:</strong> FastAPI endpoints for integration</li>
+                    <li><strong>ChromaDB:</strong> Vector storage and semantic search</li>
+                    <li><strong>Nomic Embed:</strong> Free embedding generation</li>
+                    <li><strong>Groq API:</strong> Fast LLM inference</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 5: Data Models -->
+        <div class="diagram-section">
+            <h2>5. Data Models & Schema</h2>
+            <div class="mermaid">
+                graph LR
+                    A["Chunk Schema"]
+                    B["ChromaDB<br/>Document"]
+                    C["Metadata<br/>Object"]
+                    
+                    A -->|Contains| B
+                    A -->|Contains| C
+                    
+                    B -.->|id<br/>content<br/>distance| E["Chunk Fields"]
+                    C -.->|source<br/>chunk_index<br/>ingested_at| F["Metadata Fields"]
+                    
+                    G["Vector Storage"]
+                    H["Query Vector"]
+                    I["Document Vectors"]
+                    
+                    G -->|Contains| H
+                    G -->|Contains| I
+                    
+                    H -.->|384-dim float array| J["Query Embedding"]
+                    I -.->|384-dim float array| K["Doc Embedding"]
+                    
+                    style A fill:#E5F5FF
+                    style B fill:#F0E5FF
+                    style C fill:#FFE5E5
+                    style G fill:#E5FFE5
+            </div>
+            <div class="description">
+                <strong>Data Structures:</strong>
+                <ul>
+                    <li><strong>Chunk:</strong> {id, content, source, chunk_index, length, similarity}</li>
+                    <li><strong>Vector:</strong> 384-dimensional float array (Nomic Embed output)</li>
+                    <li><strong>Metadata:</strong> {source, chunk_index, total_chunks, ingested_at}</li>
+                    <li><strong>SearchResult:</strong> {rank, content, similarity_score, distance}</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Diagram 6: System Timeline -->
+        <div class="diagram-section">
+            <h2>6. System Operation Timeline</h2>
+            <div class="mermaid">
+                timeline
+                    title RAG System Operation Timeline
+                    section Setup
+                        Install Dependencies : setup1
+                        Create Folders : setup2
+                    section Ingestion
+                        Load PDF : ingest1
+                        Extract Text : ingest2
+                        Generate Chunks : ingest3
+                        Generate Embeddings : ingest4
+                        Store in ChromaDB : ingest5
+                    section Query
+                        User Enter Query : query1
+                        Embed Query : query2
+                        Search ChromaDB : query3
+                        Format Context : query4
+                    section Generation
+                        Call Groq API : gen1
+                        Generate Response : gen2
+                        Format Output : gen3
+                        Display Results : gen4
+            </div>
+            <div class="description">
+                <strong>Operation Flow:</strong>
+                <ul>
+                    <li><strong>Setup Phase:</strong> Dependencies installed, folders created (one-time)</li>
+                    <li><strong>Ingestion Phase:</strong> PDF processed and stored (per document)</li>
+                    <li><strong>Query Phase:</strong> User query processed (per query)</li>
+                    <li><strong>Generation Phase:</strong> LLM generates response and displays results</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Key Technologies -->
+        <div class="diagram-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-top: 40px;">
+            <h2 style="color: white; border-bottom-color: white;">🛠️ Key Technologies & APIs</h2>
+            <table style="width: 100%; color: white; border-collapse: collapse;">
+                <tr>
+                    <th style="text-align: left; padding: 10px; border-bottom: 2px solid rgba(255,255,255,0.3);">Component</th>
+                    <th style="text-align: left; padding: 10px; border-bottom: 2px solid rgba(255,255,255,0.3);">Technology</th>
+                    <th style="text-align: left; padding: 10px; border-bottom: 2px solid rgba(255,255,255,0.3);">Purpose</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">PDF Processing</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">PyPDF2</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Extract text from PDFs</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Text Chunking</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">LangChain RecursiveCharacterTextSplitter</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Smart document splitting</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Embeddings</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Nomic Embed (nomic-embed-text)</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Free, 384-dim embeddings</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Vector Database</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">ChromaDB</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Local vector storage & search</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">LLM API</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Groq (mixtral-8x7b)</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Fast text generation</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">Web Server</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">FastAPI + Uvicorn</td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">REST API endpoints</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px;">Frontend</td>
+                    <td style="padding: 10px;">HTML5 + JavaScript</td>
+                    <td style="padding: 10px;">Interactive web interface</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.contentLoaderFunction = () => {
+            console.log("Mermaid diagrams loaded");
+        };
+        mermaid.mermaidAPI.initialize({ startOnLoad: true, theme: 'base' });
+    </script>
+</body>
+</html>

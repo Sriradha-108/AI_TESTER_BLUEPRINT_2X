@@ -12,3 +12,22 @@ target/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Python cache & virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Vector database storage & generated chunk exports
+**/chroma_db/
+**/adv_chroma_db/
+**/qdrant_data/
+chunks_data.json
+uploads/
+
+# Editor configurations
+.vscode/
+.idea/

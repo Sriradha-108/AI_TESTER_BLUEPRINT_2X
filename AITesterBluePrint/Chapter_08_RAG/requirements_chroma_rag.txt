@@ -1,0 +1,12 @@
+chromadb>=0.4.24
+PyPDF2>=3.0.1
+pypdf>=4.0.1
+nomic>=1.1.2
+numpy>=1.24.3
+langchain>=0.2.1
+langchain-text-splitters>=0.0.1
+python-dotenv>=1.0.1
+groq>=0.9.0
+pydantic>=2.7.0
+fastapi>=0.104.0
+uvicorn>=0.24.0

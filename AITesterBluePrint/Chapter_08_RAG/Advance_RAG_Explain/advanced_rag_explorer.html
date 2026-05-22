@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced RAG Explorer</title>
+  <style>
+    body {font-family: 'Inter', sans-serif; background: #0a0e1f; color: #e0e8ff; margin:0; padding:0;}
+    .container {display:flex; flex-direction:column; max-width:1200px; margin:auto; padding:20px;}
+    h1 {text-align:center; color:#6fffe9; margin-bottom:30px;}
+    .panel {background:rgba(255,255,255,0.04); border-radius:12px; padding:20px; margin-bottom:20px; backdrop-filter:blur(8px);}
+    label {display:block; margin-bottom:8px; font-weight:600;}
+    input[type=file] {margin-bottom:12px;}
+    button {background:#6fffe9; border:none; color:#0a0e1f; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:600;}
+    button:hover {background:#5ad8d2;}
+    textarea {width:100%; height:120px; margin-top:8px; border-radius:6px; border:none; padding:10px; background:#1a2238; color:#e0e8ff;}
+    .log {font-family:monospace; background:#1a2238; padding:10px; border-radius:6px; max-height:200px; overflow:auto;}
+    .chunk {margin:8px 0; padding:8px; background:rgba(255,255,255,0.06); border-left:4px solid #6fffe9;}
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Advanced RAG Explorer</h1>
+
+  <div class="panel" id="uploadPanel">
+    <h2>1️⃣ Upload CSV / Excel</h2>
+    <label for="fileInput">Select file:</label>
+    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" />
+    <button onclick="uploadFile()">Upload & Ingest</button>
+    <div id="uploadStatus" class="log"></div>
+    <h3>Chunk preview (first 5)</h3>
+    <div id="preview" class="log"></div>
+  </div>
+
+  <div class="panel" id="queryPanel" style="display:none;">
+    <h2>2️⃣ Query</h2>
+    <textarea id="queryInput" placeholder="Enter your question..."></textarea>
+    <button onclick="runQuery()">Ask</button>
+    <div id="pipelineLog" class="log"></div>
+    <h3>LLM Response</h3>
+    <div id="response" class="log"></div>
+  </div>
+</div>
+
+<script>
+  const API = window.location.origin;
+  async function uploadFile(){
+    const fileInput = document.getElementById('fileInput');
+    if(!fileInput.files.length){alert('Select a file');return;}
+    const file = fileInput.files[0];
+    const form = new FormData();
+    form.append('file', file);
+    document.getElementById('uploadStatus').innerText='Uploading...';
+    try {
+      const res = await fetch(`${API}/upload`,{method:'POST',body:form});
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.detail||'Upload failed');
+      document.getElementById('uploadStatus').innerText='Ingestion complete.';
+      // show preview
+      const previewDiv = document.getElementById('preview');
+      previewDiv.innerHTML='';
+      data.chunks_preview.slice(0,5).forEach(c=>{
+        const el=document.createElement('div');
+        el.className='chunk';
+        el.innerHTML=`<strong>Chunk ${c.chunk_index}</strong> (${c.source})<br>${c.content}`;
+        previewDiv.appendChild(el);
+      });
+      // enable query panel
+      document.getElementById('queryPanel').style.display='block';
+    }catch(e){
+      document.getElementById('uploadStatus').innerText='Error: '+e.message;
+    }
+  }
+
+  async function runQuery(){
+    const q = document.getElementById('queryInput').value.trim();
+    if(!q){alert('Enter a question');return;}
+    document.getElementById('pipelineLog').innerText='Running query...';
+    try {
+      const res = await fetch(`${API}/query`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,top_k_retrieve:20,top_k_rerank:5})});
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.detail||'Query failed');
+      // log pipeline steps
+      const logDiv=document.getElementById('pipelineLog');
+      logDiv.innerHTML='';
+      data.pipeline_steps.forEach(step=>{
+        const st=document.createElement('div');
+        st.innerHTML=`<strong>Step ${step.step} – ${step.name}</strong>: ${step.result || ''} (<em>${step.status}</em>)`;
+        logDiv.appendChild(st);
+      });
+      // response
+      document.getElementById('response').innerText=data.llm_response;
+    }catch(e){
+      document.getElementById('pipelineLog').innerText='Error: '+e.message;
+    }
+  }
+</script>
+</body>
+</html>
