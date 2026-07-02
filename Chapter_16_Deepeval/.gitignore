@@ -1,0 +1,13 @@
+# Python virtual environment
+venv/
+.venv/
+
+# Local vector index (rebuildable)
+.repo_qa_db/
+
+# Cloned target repo (not part of this chapter)
+Advance-Playwright-Framework/
+
+# Python caches
+__pycache__/
+*.pyc
